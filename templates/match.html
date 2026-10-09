@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}{{ m.home }} v {{ m.away }} – ScoreHub{% endblock %}
+
+{% block body %}
+<main class="wrap narrow">
+  <a class="page-back" href="{{ url_for('index', sport=m.sport, date=back_date) }}">‹ Scores</a>
+  <div id="match">
+    {% include "_match_body.html" %}
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Kickoff in the viewer's local time.
+  function localiseTimes() {
+    document.querySelectorAll(".kickdt").forEach(function (el) {
+      var d = new Date(el.dataset.utc);
+      if (!isNaN(d)) el.textContent = d.toLocaleString([], {weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"});
+    });
+  }
+  // Refresh the score every 30 seconds without reloading.
+  function refresh() {
+    fetch("{{ url_for('partial_match', match_id=m.id) }}")
+      .then(function (r) { return r.ok ? r.text() : Promise.reject(); })
+      .then(function (html) {
+        document.getElementById("match").innerHTML = html;
+        localiseTimes();
+      })
+      .catch(function () {});
+  }
+  localiseTimes();
+  setInterval(refresh, 30000);
+</script>
+{% endblock %}

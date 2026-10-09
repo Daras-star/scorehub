@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}ScoreHub{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='tz.js') }}" {% block tzreload %}{% endblock %}></script>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap top-row">
+      <a class="brand" href="{{ url_for('index') }}">ScoreHub</a>
+      <nav class="main-nav">
+        <a class="on" href="{{ url_for('index') }}">Scores</a>
+        {% block navextra %}{% endblock %}
+      </nav>
+    </div>
+    {% set sp = sport|default('all') %}
+    <div class="wrap pills">
+      <a class="{{ 'on' if sp == 'all' }}" href="{{ url_for('index') }}">All</a>
+      <a class="{{ 'on' if sp == 'football' }}" href="{{ url_for('index', sport='football') }}">Football</a>
+      <a class="{{ 'on' if sp == 'basketball' }}" href="{{ url_for('index', sport='basketball') }}">Basketball</a>
+    </div>
+  </header>
+  {% block body %}{% endblock %}
+  {% block scripts %}{% endblock %}
+</body>
+</html>

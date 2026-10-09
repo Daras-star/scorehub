@@ -1,0 +1,54 @@
+<div class="scoreboard {{ m.status }}">
+  <div class="league-line">{{ m.league }}{% if m.country %} <span class="country">{{ m.country }}</span>{% endif %}
+    {% if table_code(m.league) %}<a class="tbl" href="{{ url_for('table_page', code=table_code(m.league)) }}">Table →</a>{% endif %}</div>
+  <div class="board">
+    <div class="side">
+      {% if m.home_crest %}<img src="{{ m.home_crest }}" alt="">{% endif %}
+      <span>{{ m.home }}</span>
+    </div>
+    <div class="mid">
+      {% if m.status == 'scheduled' or m.status == 'postponed' %}
+        <div class="big">vs</div>
+      {% else %}
+        <div class="big">{{ m.home_score if m.home_score is not none else '–' }} – {{ m.away_score if m.away_score is not none else '–' }}</div>
+      {% endif %}
+      <div class="state">
+        {% if m.status == 'live' %}
+          <span class="live-dot"></span>
+          {% if m.period == 'HT' %}Half time
+          {% else %}{{ m.clock or m.period }}{% if m.sport == 'basketball' and m.period %} · {{ m.period }}{% endif %}{% endif %}
+        {% elif m.status == 'finished' %}Full time
+        {% elif m.status == 'postponed' %}Postponed
+        {% else %}Not started{% endif %}
+      </div>
+    </div>
+    <div class="side">
+      {% if m.away_crest %}<img src="{{ m.away_crest }}" alt="">{% endif %}
+      <span>{{ m.away }}</span>
+    </div>
+  </div>
+</div>
+
+{% if m.sport == 'football' and detail and detail.goals %}
+<section class="panel">
+  <h3>Goals</h3>
+  <ul class="goals">
+    {% for g in detail.goals %}
+    <li class="{{ g.side }}">
+      <span class="gmin">{{ g.minute }}</span>
+      <span class="gplayer">{{ g.player }}{% if g.kind %} <small>({{ g.kind }})</small>{% endif %}</span>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<section class="panel">
+  <h3>Match info</h3>
+  <dl class="info">
+    <dt>Kickoff</dt><dd><span class="kickdt" data-utc="{{ m.kickoff }}">{{ m.kickoff[:16].replace('T', ' ') }} UTC</span></dd>
+    <dt>Competition</dt><dd>{{ m.league }}</dd>
+    {% if detail and detail.venue %}<dt>Venue</dt><dd>{{ detail.venue }}</dd>{% endif %}
+    {% if detail and detail.referee %}<dt>Referee</dt><dd>{{ detail.referee }}</dd>{% endif %}
+  </dl>
+</section>

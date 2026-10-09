@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}{{ table.name if table else 'League table' }} – ScoreHub{% endblock %}
+
+{% block body %}
+<main class="wrap narrow">
+  <a class="page-back" href="{{ url_for('index') }}">‹ Scores</a>
+  {% if table and table.groups %}
+    <h1 class="table-title">{{ table.name }}
+      <span class="country">{% if table.season %}{{ table.season }}{% endif %}{% if table.matchday %}, matchday {{ table.matchday }}{% endif %}</span>
+    </h1>
+    {% for group in table.groups %}
+    <section class="panel standings">
+      {% if group.label %}<h3>{{ group.label }}</h3>{% endif %}
+      <table>
+        <thead>
+          <tr><th>#</th><th class="tm">Team</th><th>P</th><th>W</th><th>D</th><th>L</th>
+              <th class="opt">GF</th><th class="opt">GA</th><th>GD</th><th>Pts</th></tr>
+        </thead>
+        <tbody>
+          {% for r in group.rows %}
+          <tr>
+            <td>{{ r.position }}</td>
+            <td class="tm">{% if r.crest %}<img src="{{ r.crest }}" alt="" loading="lazy">{% endif %}{{ r.team }}</td>
+            <td>{{ r.played }}</td><td>{{ r.won }}</td><td>{{ r.draw }}</td><td>{{ r.lost }}</td>
+            <td class="opt">{{ r.gf }}</td><td class="opt">{{ r.ga }}</td>
+            <td>{{ '%+d'|format(r.gd) if r.gd is not none else '' }}</td>
+            <td class="pts">{{ r.points }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+    {% endfor %}
+  {% else %}
+    <p class="empty">The table isn't available right now. Try again in a minute.</p>
+  {% endif %}
+</main>
+{% endblock %}
